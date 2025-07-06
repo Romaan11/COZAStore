@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -21,6 +22,7 @@ class Product(models.Model):
     COLOR_CHOICES = [
         ('BLK', 'Black'),
         ('BLU', 'Blue'),
+        ('WHT', 'White'),
         ('RED', 'Red'),
         ('GRN', 'Green'),
     ]
@@ -28,11 +30,13 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     description = models.TextField()
-    size = models.CharField(max_length=2, choices=SIZE_CHOICES, blank=True)
-    color = models.CharField(max_length=3, choices=COLOR_CHOICES, blank=True)
+    featured_image = models.ImageField(upload_to='products/')
+    size = models.CharField(max_length=2, choices=SIZE_CHOICES, blank=True, null=True)
+    color = models.CharField(max_length=3, choices=COLOR_CHOICES, blank=True, null=True)
     quantity = models.PositiveIntegerField(default=1)
-    image = models.ImageField(upload_to='products/')
     
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('product_detail', kwargs={'pk': self.pk})
